@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математикийн Суурь Чадварын Тест</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .correct { background-color: #d1fae5; border-color: #10b981; }
+        .incorrect { background-color: #fee2e2; border-color: #ef4444; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen py-8 px-4">
+    <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div class="bg-blue-600 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold italic">🔢 Эерэг ба Сөрөг тооны үйлдлүүд</h1>
+            <p class="mt-2 opacity-90">Бататгах 60 дасгал (Интерактив тест)</p>
+        </div>
+
+        <div class="p-6 space-y-8">
+            <!-- Section 1 -->
+            <section>
+                <h2 class="text-xl font-bold text-blue-800 border-b-2 border-blue-100 pb-2 mb-4">I Шат: Дунд түвшин (Үндсэн үйлдлүүд)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="section1"></div>
+            </section>
+
+            <!-- Section 2 -->
+            <section>
+                <h2 class="text-xl font-bold text-blue-800 border-b-2 border-blue-100 pb-2 mb-4">II Шат: Ахисан түвшин (Үйлдлийн дараалал)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="section2"></div>
+            </section>
+
+            <!-- Section 3 -->
+            <section>
+                <h2 class="text-xl font-bold text-blue-800 border-b-2 border-blue-100 pb-2 mb-4">III Шат: Мастер түвшин (Холимог)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="section3"></div>
+            </section>
+
+            <div class="sticky bottom-4 bg-white p-4 border-t shadow-lg flex justify-between items-center rounded-xl">
+                <div>
+                    <span class="text-lg font-semibold">Оноо: <span id="scoreDisplay">0 / 60</span></span>
+                </div>
+                <button onclick="checkAll()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                    Бүгдийг шалгах
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // Section 1
+            { q: "-15 + (-8)", a: -23, s: 1 }, { q: "-22 - (-14)", a: -8, s: 1 },
+            { q: "18 + (-25)", a: -7, s: 1 }, { q: "-40 - 12", a: -52, s: 1 },
+            { q: "(-9) × (-7)", a: 63, s: 1 }, { q: "56 ÷ (-8)", a: -7, s: 1 },
+            { q: "(-12) × 4", a: -48, s: 1 }, { q: "(-100) ÷ (-5)", a: 20, s: 1 },
+            { q: "-3 × (-4) × (-2)", a: -24, s: 1 }, { q: "(-2) × 5 × (-6)", a: 60, s: 1 },
+            { q: "14 - 20 + 5 - 8", a: -9, s: 1 }, { q: "-1 - 2 - 3 - 4 - 5", a: -15, s: 1 },
+            { q: "(-15) ÷ 3 × (-2)", a: 10, s: 1 }, { q: "45 ÷ (-9) ÷ (-1)", a: 5, s: 1 },
+            { q: "-8 + (-12) - (-20)", a: 0, s: 1 }, { q: "100 - (-50) + (-30)", a: 120, s: 1 },
+            { q: "(-7)²", a: 49, s: 1 }, { q: "-7²", a: -49, s: 1 },
+            { q: "(-3)³", a: -27, s: 1 }, { q: "-(-(-10))", a: -10, s: 1 },
+
+            // Section 2
+            { q: "-5 × (8 - 12)", a: 20, s: 2 }, { q: "(15 - 20) × (-3 + 7)", a: -20, s: 2 },
+            { q: "-24 ÷ (10 - 14) + 6", a: 12, s: 2 }, { q: "10 - [(-4) × (-5)]", a: -10, s: 2 },
+            { q: "(-18 + 6) ÷ (-3) - 10", a: -6, s: 2 }, { q: "5 × (-2)² - 30", a: -10, s: 2 },
+            { q: "-12 ÷ (-2)² + (-5)", a: -8, s: 2 }, { q: "(10 - 15)² ÷ (-5)", a: -5, s: 2 },
+            { q: "-2 × (-3 + 8) - (-12)", a: 2, s: 2 }, { q: "40 ÷ (-2)³ + 15", a: 10, s: 2 },
+            { q: "3 × (-4) - 2 × (-5)", a: -2, s: 2 }, { q: "(-10 + 2) ÷ (-4) + 1", a: 3, s: 2 },
+            { q: "15 - (-3) × (-4) + 2", a: 5, s: 2 }, { q: "-(8 - 15) + (2 - 9)", a: 0, s: 2 },
+            { q: "(-1)¹⁰⁰ + (-1)¹⁰¹", a: 0, s: 2 }, { q: "2 × (-3)² - 4 × (-2)³", a: 50, s: 2 },
+            { q: "[(-12 + 4) × (-2)] ÷ (-4)", a: -4, s: 2 }, { q: "50 ÷ (-5) - (-10) × 2", a: 10, s: 2 },
+            { q: "-7 + (-3) × [5 - (-2)]", a: -28, s: 2 }, { q: "(-2)⁴ - (-2)³ + (-2)² - (-2)¹", a: 30, s: 2 },
+
+            // Section 3
+            { q: "-0.5 × (-12) + (-4)", a: 2, s: 3 }, { q: "-24/6 - (-15/-3)", a: -9, s: 3 },
+            { q: "(-1/2) × (-8) - 10", a: -6, s: 3 }, { q: "1.2 - 2.5 + (-3.7)", a: -5, s: 3 },
+            { q: "(-2)⁵ ÷ (-4)²", a: -2, s: 3 }, { q: "3x - 5x + 8x (x = -4)", a: -24, s: 3 },
+            { q: "-2(a - 3) (a = -5)", a: 16, s: 3 }, { q: "|-15| + (-10) - |-5|", a: 0, s: 3 },
+            { q: "-|-8+3| × (-2)", a: 10, s: 3 }, { q: "x² - y² (x=-3, y=-2)", a: 5, s: 3 },
+            { q: "(-1)×(-2)×(-3)×(-4)×(-5)", a: -120, s: 3 }, { q: "(-10 + (-2)×5) / -4", a: 5, s: 3 },
+            { q: "100 ÷ (-10) ÷ (-10) ÷ (-1)", a: -1, s: 3 }, { q: "-(-(-(-5)))", a: 5, s: 3 },
+            { q: "x - (y - z) (x=-1, y=-2, z=-3)", a: -2, s: 3 }, { q: "5(-1)²⁰²⁴ - 3(-1)²⁰²⁵", a: 8, s: 3 },
+            { q: "(-8+8) × (-156+789)", a: 0, s: 3 }, { q: "-36/4 + 42/-7 - (-5)", a: -10, s: 3 },
+            { q: "[(-2)³ - (-3)²] × (-1)", a: 17, s: 3 }, { q: "(-1-2-3)×(1+2+3)÷(-6)", a: 6, s: 3 }
+        ];
+
+        function init() {
+            questions.forEach((item, index) => {
+                const container = document.getElementById(`section${item.s}`);
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-3 bg-white border rounded-lg hover:shadow-sm transition";
+                div.innerHTML = `
+                    <span class="text-gray-700 font-medium">${index + 1}. <span class="ml-2">${item.q} =</span></span>
+                    <input type="number" id="ans${index}" class="w-24 p-2 border rounded text-center focus:ring-2 focus:ring-blue-400 outline-none transition" placeholder="?">
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkAll() {
+            let correctCount = 0;
+            questions.forEach((item, index) => {
+                const input = document.getElementById(`ans${index}`);
+                const userVal = parseFloat(input.value);
+                
+                if (userVal === item.a) {
+                    input.classList.remove('incorrect');
+                    input.classList.add('correct');
+                    correctCount++;
+                } else {
+                    input.classList.remove('correct');
+                    input.classList.add('incorrect');
+                }
+            });
+            document.getElementById('scoreDisplay').innerText = `${correctCount} / 60`;
+            if(correctCount === 60) {
+                alert("Баяр хүргэе! Та бүх бодлогыг зөв бодлоо!");
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
